@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
 	"zareix/goprojects/02-backend-api/internal/middleware"
 
 	"github.com/rs/cors"
@@ -108,8 +109,12 @@ func main() {
 	})
 
 	server := http.Server{
-		Addr:    ":3000",
-		Handler: cors.Default().Handler(middleware.LoggingMiddleware(router)),
+		Addr: ":3000",
+		// Handler: cors.Default().Handler(middleware.LoggingMiddleware(router)),
+		Handler: middleware.CreateStack(
+			cors.Default().Handler,
+			middleware.LoggingMiddleware,
+		)(router),
 	}
 
 	fmt.Println("Listening on port 3000...")
